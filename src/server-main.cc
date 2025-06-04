@@ -1,7 +1,15 @@
-#include "spdlog/spdlog.h"
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
+// #include "server/chat-server.h"
+#include "server/epoll-server.h"
 int main() {
-  SPDLOG_INFO("Hello, World! This is just a Hello World. Please replace with "
-              "your code.");
-  return 0;
+    const int kPort = 8080;
+
+    tt::chat::server::EpollServer server(kPort);
+    server.run();
+
+    return 0;
 }
