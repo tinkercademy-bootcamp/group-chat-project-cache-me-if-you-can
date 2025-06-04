@@ -1,59 +1,69 @@
-# Group Exercise
+# Exercise 7
 
-## Overview
-Come up with an interesting group project centered around a chat app over the TCP protocol.
+**Update this README with your answers to the questions below.**
 
-## Planning
-- Come up with a detailed timeline for the features you want to support
-- Each team will work on one task. 
+## Resources for Learning About EPOLL
 
-## Tasks
-1. Create the directory structure and organization of the files
-2. Create a test framework which can create many client connections to the chat server and measure the transfer speed
-3. Create a method to benchmark the performance, say for example by using `perf` and [FlameGraph](https://github.com/brendangregg/FlameGraph)
-4. Measure the performance for that chat server sending chat messages to a large number of clients using TCP, vs sending the chat messages by using UDP multicast
+- https://suchprogramming.com/epoll-in-3-easy-steps/
+- https://github.com/onestraw/epoll-example/
+- https://github.com/joakimthun/io-uring-echo-server
+- https://man7.org/linux/man-pages/man7/epoll.7.html
+- What other resources can you find about epoll?
+- Are the above code repos examples of good code or bad code?
+- How do you decide what is good code or bad code?
 
-## Project Management Questions
-- How will you handle branching and Pull Requests?
-- How do you determine which PRs get accepted by the group, and which PRs get accepted into the main branch?
+## Creating a Chat Client/Server Using EPOLL
 
-## Technical Considerations
-### Data Structures and Formats
-- What data structures would you need to send and receive from the server? 
-- What data format should the data structures be sent in?
-- Keeping in mind that in HFT, we are seeking maximum ultra low latency programming, what data format should we use to send our data?
-- What if you had to scale this chat program up to support millions of simultaneous users?
+- Use the above resources and what you have learned to start a brand new C++
+  project
+- The server should be able to accept multiple connections at a time, as many
+  as you can, to chat with each other
+- Each client should be able to communicate with the server in some way so
+  that each client can be assigned a **username**
+- Each client can send at least the following commands:
+  - List channels
+  - Go to channel
+  - Create channel
+- Whenever a user types in a message, it should be displayed to everyone else
+  in the channel
+- You are free to come up with any other commands that you like
+- You can use any directory structure or any makefile that you like
 
-### Performance and Measurement
-- I recommend experimenting with different data formats and measuring the performance, instead of guessing.
-- I will be curious to learn what you find out about the limitations of various forms of measurement and what can be done about them.
-- The Bonus section from `exercise-3` of `tt-chat` will be helpful in this process
+I think about going like this as in exercise-5:
+```
+epoll-chat/
+│
+├── src/
+│   ├── server/
+│   │   ├── channel_manager.cc / channel_manager.h
+│   │   ├── epoll-server.cc / epoll-server.h
+│   ├── client/
+│   │   ├── chat-client.cc / chat-client.h
+│   ├── net/
+│   │   ├── chat-sockets.cc / chat-sockets.h
+│   ├── client-main.cc
+│   ├── server-main.cc
+│   └── utils.h
+├── .gitignore
+├── Makefile
+├── README.md
 
-### Technical Concepts to Study
-- It will be relevant to learn about why structs and classes need to have padding and byte alignment
-- It will be relevant to learn about `#pragma pack` and `__attribute__((packed))` 
-- It will be relevant to learn more about `inet_ntop()` and `inet_pton()`.
-- Similarly, `htons()` and `ntohs()`, `htonl()` and `ntohl()`
-- What is network byte order and what is system byte order, in the context of these functions?
+```
+- You can use any 3rd party open source library that you like
+- However for the purposes of this bootcamp, please stay with make and bash
+  scripts
+- `cmake`, `ninja`, `conan` and `vcpkg` are all useful tools but are out of
+  scope for this bootcamp
+- Some libraries that are likely to be useful:
+- `sudo apt get ncurses-dev`
+- For the more ambitious: `sudo apt get libsdl2-dev`
 
-### HFT-Specific Considerations
-- It will be relevant to watch this video: [Type Punning in C++](https://www.youtube.com/watch?v=_qzMpk-22cc)
-- With an additional explanation that for HFT, for performance reasons the preference is to `std::memcpy` only a small metadata header
-  - Which includes a checksum. 
-  - If the checksum passes and the size of the received data matches the metadata 
-  - It is ok to use reinterpret_cast on the remaining payload.
-  - This is ok in a HFT context because the same company controls both sides of the client and server and can control the platform and compiler flags used for both builds
+## Adding a Third Party Library from Source
 
-### Learning Resources
-- There are some unofficial guides that are more beginner friendly than the official RFCs or the man pages.
-- For example, a well regarded introduction to sockets is [Beej's guide to Network Programming](https://beej.us/guide/bgnet/html/)
-- How do you go about finding such good unofficial guides? 
-- Note that Beej's guide is not completely up-to-date.
-- epoll is considered a better replacement for select and poll
-- How would you go about testing the performance of the chat server sending its messages by TCP, vs multicasting by UDP?
-
-## Reference Materials
-- [RFC 1112: IP Multicasting](https://www.rfc-editor.org/rfc/rfc1112)
-- [RFC 768: UDP](https://datatracker.ietf.org/doc/html/rfc0768)
-- [RFC 8085: UDP Usage Guidelines](https://datatracker.ietf.org/doc/html/rfc8085)
-- [tldp Multicasting](https://tldp.org/HOWTO/Multicast-HOWTO.html) (note that the above is titled Multicasting over TCP/IP but actually discusses multicasting over UDP, this is explained in section 2 of the guide)
+- Not all useful open source libraries will be available as a debian package
+- For the purposes of this workshop, your only options are to install a
+  shared library into `usr/include` and `usr/lib`, or to git clone
+  the source code and build it
+- What are the tradeoffs between using a library from `usr/lib` vs git cloning
+  the source and using that instead?
+- What is the difference between `-l` and `-L` when linking using `g++`?
